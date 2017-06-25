@@ -28,12 +28,10 @@ object Main extends App with DefaultJsonProtocol with SprayJsonSupport {
         implicit val timeout: Timeout = 5.second
         val res = (greetActor ? MessageActor.GetMessages).mapTo[List[Message]]
         complete(res)
-      }
-    } ~
-    path("message"/) {
-      get {
-        parameter("text") { text =>
-          greetActor ! CreateMessage(Message(text))
+      }~
+      post {
+        entity(as[Message]) { msg =>
+          greetActor ! CreateMessage(msg)
           complete(StatusCodes.OK)
         }
       }
